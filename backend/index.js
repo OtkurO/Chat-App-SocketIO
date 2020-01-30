@@ -1,3 +1,11 @@
+const {
+  users,
+  addUser,
+  deleteUser,
+  getUser,
+  getUsersInRoom,
+} = require('./users');
+
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
@@ -12,13 +20,52 @@ const io = socketIO(server);
 
 app.use(router);
 server.listen(PORT, () =>
-  console.log(`Server started! Listening on port ${PORT}.`)
+  console.log(
+    `Server started! Listening on port ${PORT}. Timestamp: ${Date.now()}`
+  )
 );
 
 io.on('connection', socket => {
-  console.log('A new client is connected to chat server!');
+  console.log(
+    `A new client is connected to chat server! Socket is: ${socket.id}.`,
+    Date.now()
+  );
 
-  socket.on('disconnet', () => {
-    console.log(`User on client ${socket} had disconnected from the server`);
+  socket.on('join', ({ name, room }, callback) => {
+    const { error, user } = addUser({ id: socket.id, name, room });
+
+    if (error) {
+      return callback(error);
+    }
+
+    socket.emit('message', {
+      user: 'System Admin',
+      text: `${user.name}, welcome to the chat room ${user.room}!`,
+    });
+    socket.broadcast.to(user.room).emit('message', {
+      user: 'System Admin',
+      text: `${user.name} has joined the chat.`,
+    });
+
+    socket.join(user.room);
+  });
+
+  socket.on('sendMessage', (message, callback) => {
+    const user = getUser(socket.id);
+    io.to(user.room).emit('message', { user: user.name, text: message });
+
+    callback();
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`User on socket ${socket.id} had disconnected from the server`);
+    const user = deleteUser(socket.id);
+
+    if (user) {
+      io.to(user.room).emit('message', {
+        user: 'System Admin',
+        text: `${user.name} has left the chat.`,
+      });
+    }
   });
 });

@@ -28,10 +28,14 @@ const useStyles = makeStyles(theme => ({
   extendedIcon: {
     marginRight: theme.spacing(1),
   },
+  link: {
+    textDecoration: 'none',
+  },
 }));
 
 const Login = () => {
   const [username, setUsername] = useState('');
+  const [roomname, setRoomname] = useState('');
   const classes = useStyles();
   return (
     <div className='logInOuterContainer'>
@@ -43,20 +47,35 @@ const Login = () => {
           <div>
             <TextField
               required
-              id='standard-required'
-              label='Normal'
+              id='standard-required-name'
+              label='User Name'
               className={classes.textField}
-              helperText='You need to enter a username to enter the chat room'
+              helperText='User name required to enter the chat room'
               placeholder='Enter username'
               margin='normal'
               onChange={event => {
                 setUsername(event.target.value);
               }}
             />
+            <TextField
+              required
+              id='standard-required-room'
+              label='Chat Room Name'
+              className={classes.textField}
+              helperText='Chat room name required to enter the chat room'
+              placeholder='Enter room name'
+              margin='normal'
+              onChange={event => {
+                setRoomname(event.target.value);
+              }}
+            />
           </div>
           <Link
-            onClick={event => (!username ? event.preventDefault() : null)}
-            to={`/chat?name=${username}`}
+            className={classes.link}
+            onClick={event =>
+              !username || !roomname ? event.preventDefault() : null
+            }
+            to={`/chat?name=${username}&room=${roomname}`}
           >
             <Button
               size='large'
