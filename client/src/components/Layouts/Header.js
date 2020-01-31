@@ -1,14 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  IconButton,
-} from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
+import { AppBar, Toolbar, Typography, Button } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -17,13 +10,19 @@ const useStyles = makeStyles(theme => ({
   menuButton: {
     marginRight: theme.spacing(2),
   },
+  appbar: {
+    backgroundColor: '#ddf',
+  },
   title: {
     flexGrow: 1,
+    color: 'black',
   },
-  appbar: {
-    backgroundColor: '#2813a0',
+  roomName: {
+    flexGrow: 1,
+    color: 'black',
+    marginRight: theme.spacing(1),
   },
-  logout: {
+  logoutBtn: {
     backgroundColor: 'primary',
   },
 }));
@@ -34,32 +33,27 @@ const Header = props => {
     <div className={classes.root}>
       <AppBar className={classes.appbar} position='static'>
         <Toolbar>
-          <IconButton
-            edge='start'
-            className={classes.menuButton}
-            color='inherit'
-            aria-label='menu'
-          >
-            <MenuIcon />
-          </IconButton>
           <Typography variant='h6' className={classes.title}>
             Chat Room 2020
           </Typography>
 
           {props.logStatus === true && (
-            <Link
-              className={classes.link}
-              onClick={() => props.clickHandler}
-              to={`/`}
-            >
-              <Button
-                className={classes.logout}
-                variant='contained'
-                color='primary'
-              >
-                Log out
-              </Button>
-            </Link>
+            <div>
+              <Typography variant='h7' className={classes.roomName}>
+                <strong>{props.userName}</strong>, you are in room:{' '}
+                <strong>{props.roomName}</strong>
+              </Typography>
+              <Link onClick={props.clickHandler} to={`/`}>
+                <Button
+                  className={classes.logoutBtn}
+                  variant='contained'
+                  color='primary'
+                  type='submit'
+                >
+                  Log out
+                </Button>
+              </Link>
+            </div>
           )}
         </Toolbar>
       </AppBar>

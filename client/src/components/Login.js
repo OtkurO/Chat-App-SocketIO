@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Header, Footer } from './Layouts';
+import { Header } from './Layouts';
 import { Container, Button, TextField } from '@material-ui/core';
 import TelegramIcon from '@material-ui/icons/Telegram';
 
@@ -90,7 +90,6 @@ const Login = () => {
           </Link>
         </div>
       </Container>
-      <Footer />
     </div>
   );
 };

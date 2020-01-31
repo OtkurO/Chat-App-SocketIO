@@ -19,6 +19,8 @@ const server = http.createServer(app);
 const io = socketIO(server);
 
 app.use(router);
+app.use(cors);
+
 server.listen(PORT, () =>
   console.log(
     `Server started! Listening on port ${PORT}. Timestamp: ${Date.now()}`
@@ -48,6 +50,9 @@ io.on('connection', socket => {
     });
 
     socket.join(user.room);
+
+    const users = getUsersInRoom(user.room);
+    io.to(user.room).emit('updateUsers', users);
   });
 
   socket.on('sendMessage', (message, callback) => {
@@ -66,6 +71,9 @@ io.on('connection', socket => {
         user: 'System Admin',
         text: `${user.name} has left the chat.`,
       });
+      const users = getUsersInRoom(user.room);
+      io.to(user.room).emit('updateUsers', users);
     }
+    console.log(`In the socket disconnect event`);
   });
 });
