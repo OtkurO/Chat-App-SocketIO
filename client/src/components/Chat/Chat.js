@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Header } from './Layouts';
+import Header from '../Header/Header';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField, Button } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
+import { TextField, Button, Paper } from '@material-ui/core';
 import queryString from 'query-string';
 import ioClient from 'socket.io-client';
-import SendIcon from '@material-ui/icons/Send';
 
 let socket;
 
@@ -13,50 +11,73 @@ const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
+    '& .MuiOutlinedInput-multiline': {
+      '& fieldset': {
+        borderColor: '#5557bb',
+        borderWidth: 1,
+        borderRadius: '10px',
+      },
+    },
+    '&  .MuiFormHelperText-root': {
+      color: '#fff',
+    },
+    '&  #outlined-multiline-static-label': {
+      color: '#fff',
+    },
   },
-  upperPane: {
-    margin: 0,
-    display: 'flex',
-    flexWrap: 'wrap',
-    width: '100vw',
-    height: '70vh',
+  a: {
+    textDecoration: 'none',
   },
   leftPane: {
+    position: 'fixed',
     margin: 0,
-    width: '25%',
+    paddingTop: '65px',
+    width: '20%',
     height: '100vh',
-    backgroundColor: '#ddf',
-    color: '#336',
+    backgroundColor: '#333339',
+    color: '#fff',
+  },
+  nameInList: {
+    borderTop: '1px solid #7777aa30',
+    borderBottom: '1px solid #7777aa30',
+    paddingLeft: '15px',
   },
   rightPane: {
-    margin: 'auto',
-    width: '75%',
-    height: '70vh',
+    marginLeft: '20%',
+    paddingTop: '60px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    flexDirection: 'colomn',
+    width: '80%',
+    height: '100vh',
+  },
+  rightUpperPane: {
+    paddingLeft: '15px',
+    width: '100%',
+    height: '72vh',
     backgroundColor: '#00000000',
     color: '#fff',
   },
 
-  nameInList: {
-    borderBottom: '1px solid black',
-    borderTop: '1px solid black',
+  textInputDiv: {
+    borderTop: '1px solid #7777aa30',
+    paddingLeft: '10px',
+    paddingTop: '10px',
+    width: '100%',
+    height: '20vh',
+    backgroundColor: '#313131',
   },
 
-  textInputPane: {
-    marginLeft: '25%',
-    width: '75%',
-    height: '30vh',
-    backgroundColor: '#ddf',
-  },
   textField: {
-    margin: '1%',
-    marginTop: theme.spacing(1),
-    width: '98%',
-    color: 'primary',
+    margin: '0',
+    width: 'calc(100% - 75px)',
   },
   button: {
-    marginLeft: '40%',
-    width: '20%',
-    color: '#eff',
+    margin: '4px',
+    width: '62px',
+    height: '40px',
+    color: '#fff',
+    backgroundColor: '#5557bb',
   },
 }));
 
@@ -67,7 +88,7 @@ const Chat = ({ location }) => {
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
 
-  const ENDPOINT = 'localhost:5000';
+  const ENDPOINT = 'http://192.168.68.113:5000';
 
   useEffect(() => {
     const { name, room } = queryString.parse(location.search);
@@ -80,7 +101,7 @@ const Chat = ({ location }) => {
 
     return () => {
       socket.emit('disconnect');
-      socket.off();
+      socket.close();
     };
   }, [location.search]);
 
@@ -106,9 +127,9 @@ const Chat = ({ location }) => {
     }
   };
 
-  const logOut = () => {
+  const logOut = event => {
     socket.emit('disconnect');
-    socket.off();
+    socket.close();
   };
 
   const classes = useStyles();
@@ -123,20 +144,19 @@ const Chat = ({ location }) => {
       />
 
       <div className={classes.root}>
-        <div className={classes.upperPane}>
-          <Paper className={classes.leftPane} elevation={3}>
-            <div className={classes.nameInList}>
-              {users.map((user, i) => {
-                return (
-                  <div key={i}>
-                    <p>{user.name}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </Paper>
-
-          <Paper className={classes.rightPane} elevation={0}>
+        <Paper className={classes.leftPane} elevation={3}>
+          <div className={classes.nameInList}>
+            {users.map((user, i) => {
+              return (
+                <div key={i}>
+                  <p>{user.name}</p>
+                </div>
+              );
+            })}
+          </div>
+        </Paper>
+        <div className={classes.rightPane}>
+          <div className={classes.rightUpperPane}>
             <div>
               {messages.map((msg, i) => {
                 return (
@@ -148,42 +168,41 @@ const Chat = ({ location }) => {
                 );
               })}
             </div>
-          </Paper>
-        </div>
+          </div>
 
-        <Paper className={classes.textInputPane} elevation={3}>
-          <div>
+          <div className={classes.textInputDiv}>
             <TextField
               required
-              id='filled-multiline-static'
+              id='outlined-multiline-static'
               multiline
               variant='outlined'
-              rows='5'
+              rows='3'
+              inputProps={{ style: { color: 'white' } }}
               label='Message:'
               className={classes.textField}
               value={message}
-              helperText='Type or send whatever you want and hit send button.'
-              margin='normal'
+              helperText='*For new line press "Shift+Enter"; To send press "Enter" or button.'
               onChange={event => {
                 setMessage(event.target.value);
               }}
               onKeyPress={event =>
-                event.key === 'Enter' ? sendMessage(event) : null
+                event.key === 'Enter' && !event.shiftKey
+                  ? sendMessage(event)
+                  : null
               }
             />
-
             <Button
-              size='large'
+              size='small'
               variant='contained'
               color='primary'
               className={classes.button}
-              endIcon={<SendIcon />}
               type='submit'
+              onClick={event => sendMessage(event)}
             >
               Send
             </Button>
           </div>
-        </Paper>
+        </div>
       </div>
     </div>
   );

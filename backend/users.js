@@ -1,5 +1,5 @@
 const users = [];
-const addUser = ({ id, name, room }) => {
+const addUser = ({ id, name, room, joinTime }) => {
   name = name.replace(/\s+/g, '').toLowerCase();
   room = room.replace(/\s+/g, '').toLowerCase();
 
@@ -10,7 +10,7 @@ const addUser = ({ id, name, room }) => {
     return { error: 'The username has already been taken in the chat room!' };
   }
 
-  const user = { id, name, room };
+  const user = { id, name, room, joinTime };
   users.push(user);
 
   return { user };

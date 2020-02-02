@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import { Header } from './Layouts';
+import Header from '../Header/Header';
 import { Container, Button, TextField } from '@material-ui/core';
 import TelegramIcon from '@material-ui/icons/Telegram';
 
@@ -10,6 +10,12 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     display: 'flex',
     flexWrap: 'wrap',
+    '&  .MuiFormHelperText-root': {
+      color: '#fff',
+    },
+    '&  #MuiFormLabel-root': {
+      color: '#fff',
+    },
   },
   textField: {
     marginLeft: theme.spacing(1),
@@ -19,11 +25,15 @@ const useStyles = makeStyles(theme => ({
   menuButton: {
     marginRight: theme.spacing(2),
   },
-  title: {
+  heading: {
+    marginTop: theme.spacing(15),
     flexGrow: 1,
+    color: '#fff',
   },
   button: {
     margin: theme.spacing(1),
+    color: '#fff',
+    backgroundColor: '#5557bb',
   },
   extendedIcon: {
     marginRight: theme.spacing(1),
@@ -43,7 +53,7 @@ const Login = () => {
 
       <Container maxWidth='md'>
         <div className='logInOuterContainer'>
-          <h1 className='heading'>Welcome to the Chat Room</h1>
+          <h1 className={classes.heading}>Welcome to Chat Room 2020</h1>
           <div>
             <TextField
               required
@@ -51,6 +61,7 @@ const Login = () => {
               label='User Name'
               className={classes.textField}
               helperText='User name required to enter the chat room'
+              inputProps={{ style: { color: 'white' } }}
               placeholder='Enter username'
               margin='normal'
               onChange={event => {
@@ -63,6 +74,7 @@ const Login = () => {
               label='Chat Room Name'
               className={classes.textField}
               helperText='Chat room name required to enter the chat room'
+              inputProps={{ style: { color: 'white' } }}
               placeholder='Enter room name'
               margin='normal'
               onChange={event => {
